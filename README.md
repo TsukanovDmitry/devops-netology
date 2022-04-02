@@ -1,60 +1,25 @@
-# Домашняя работа по заданию "Работа в терминале 1"
+# Домашняя работа по заданию "Работа в терминале 2"
 
-1. Done
-2. PS C:\Users\TsukanovDA-VTB\Documents\Vagrant> vagrant --version
-Vagrant 2.2.17.dev
-PS C:\Users\TsukanovDA-VTB\Documents\Vagrant>
-
-3. Done
+1. Это встроенная команда оболочки Linux. Потому что она имеет одно конкретное назначение и действие.
+2. Если просто нужно узнать cовпадений, то наверное вот так -  "grep <some string> <file> -с"
+3. Судя по всему, это systemd 
+![image](https://user-images.githubusercontent.com/75790619/161366658-31c36ac2-58a3-489f-a3dd-1985fe8f8c1e.png)
 4. 
-PS C:\Users\TsukanovDA-VTB\Documents\Vagrant> vagrant init
-==> vagrant: A new version of Vagrant is available: 2.2.19 (installed version: 2.2.17.dev)!
-==> vagrant: To upgrade visit: https://www.vagrantup.com/downloads.html
+    Смотрим id терминалов через команду tty
+    Выполняем ls -la > <адресс терминала>
+    ![image](https://user-images.githubusercontent.com/75790619/161367093-b4043084-4ef6-437e-9c45-8623e8ce9380.png)
+    ![image](https://user-images.githubusercontent.com/75790619/161367097-4aa86e8d-d17c-4436-81a1-c93ed12f09f9.png)
 
-A `Vagrantfile` has been placed in this directory. You are now
-ready to `vagrant up` your first virtual environment! Please read
-the comments in the Vagrantfile as well as documentation on
-`vagrantup.com` for more information on using Vagrant.
+5. Как то так 
+    ![image](https://user-images.githubusercontent.com/75790619/161367659-e9444f40-ab9f-4180-85d2-26bfcfcaef05.png)
 
-Предложенный вариант нерабочий, тк отсутствуют образы. Возможно закрыли доступ 
-Делал иначе, по документации vagrant.
-PS C:\Users\TsukanovDA-VTB\Documents\Vagrant> vagrant box add ubuntu https://github.com/kraksoft/vagrant-box-ubuntu/releases/download/15.04/ubuntu-15.04-amd64.box
-==> box: Box file was not detected as metadata. Adding it directly...
-==> box: Adding box 'ubuntu' (v0) for provider:
-    box: Downloading: https://github.com/kraksoft/vagrant-box-ubuntu/releases/download/15.04/ubuntu-15.04-amd64.box
-Download redirected to host: objects.githubusercontent.com
-    box:
-==> box: Successfully added box 'ubuntu' (v0) for 'virtualbox'!
-
-config.vm.box = "bento/ubuntu-20.04" заменил на config.vm.box = "ubuntu"
-
-vagrant up 
-
-5. Дисковое пространство - 40 гб
-   Видеопамять - 16 мб
-   ОЗУ - 512 мб
-6. config.vm.provider "virtualbox" do |v|
-  v.memory = 1024
-  v.cpus = 2
-  end 
-  
-7. Done
-8. HISTFILESIZE, строка 1155
-9. Выполнение команд циклом (touch {1..10}.txt создаст 10 файлов)
-10. touch {000001..100000}.txt С 300000 не вышло, слишком большое количество аргументов.
-11. Проверяет условие у -d /tmp и возвращает ее статус (0 или 1), наличие катаолга /tmp
-12. 
-ubuntu@ubuntu:~$ mkdir /tmp/new_path_dir/
-ubuntu@ubuntu:~$ cp /bin/bash /tmp/new_path_dir/
-ubuntu@ubuntu:~$ type -a bash
-bash is /usr/bin/bash
-bash is /bin/bash
-ubuntu@ubuntu:~$ PATH=/tmp/new_path_dir/:$PATH
-ubuntu@ubuntu:~$ type -a bash
-bash is /tmp/new_path_dir/bash
-bash is /usr/bin/bash
-bash is /bin/bash
-  
-13. at - запуск в указанное время
-    batch - запуск при условии загрузки ниже 1.5
-14. Done    
+6. В теории да, по аналогии с пунктом 4.
+7. К тому что создастся новый дескриптор 5 и свяжется с дескриптором вывода. Если я выполню команду echo netology > /proc/$$/fd/5, то вывод будет направлен в терминал, а не только в файл.
+8.  cat -n tmp && cat -n devops 6>&1 1>&2 2>&6 | wc -l
+9. cat /proc/$$/environ - эквивалент команды env. Они выводят переменные окружения.
+10. /proc/[pid]/cmdline - содержит командную строку процесса. proc/[pid]/exe - содержит ссылку на исполняемую команду для запуска процесса. При помощи нее можно создать копию процесса.
+11. Похоже что 4_2
+![image](https://user-images.githubusercontent.com/75790619/161368891-7788e8d0-5f28-4e7b-93fd-59da9ac3d0e7.png)
+12. Потому что Linux не создает псевдотерминал по умолчанию при отправке команд по shh. Чтобы создать его принудительно, используется ключ -t
+13. Done
+14. Потому что в случае с sudo tee не требуется перенаправления и команда сразу напишет в файл под суперпользователем.    
