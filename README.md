@@ -17,7 +17,7 @@
     
     Тогда не совсем понимаю задания. Нужно взять уже готовый файл, передать его в stdin и его stdout вывести в другой файл?
     Тогда получится вот так, наверное
-    ![image](https://user-images.githubusercontent.com/75790619/161374024-64260a22-65bb-4b90-82a0-4999ccc1c53d.png)
+    ![image](https://user-images.githubusercontent.com/75790619/161374204-8b452bf7-dacf-409e-903a-c33ef06883d0.png)
 
 
 6. В теории да, по аналогии с пунктом 4.
