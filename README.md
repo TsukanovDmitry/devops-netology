@@ -1,48 +1,66 @@
 # Домашнее задание по лекции "Операционные системы (лекция 1)"
 
-1. Я так понимаю что - chdir("/tmp")
-2. openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
-3. Получилось только с редактором vim 
+1. Скачал tar.gz архив, распаковал. 
+Создаем юнит файл 
+![image](https://user-images.githubusercontent.com/75790619/163824230-63f247d6-fdde-42e6-8512-a8104ba66828.png)
 
-vi log
+Добавляем в автозагрузку:
+sudo systemctl enable node-exporter
 
-string 
-string
-string
+Рестартуем, проверяем что служба запустилась
 
+![image](https://user-images.githubusercontent.com/75790619/163824412-2f1e913b-3317-4911-a2cb-4d396ec65aee.png)
 
-(В другой консоли)
+Создаем файл с дополнительной переменной окружения, в каталоге, который прописан в unit
 
-devops@devops-netology:~$ rm .log.swp
-devops@devops-netology:~$ lsof | grep deleted
-vi        35754                          devops    3u      REG              253,0    12288     655929 /home/devops/.log.swp (deleted)
-
-3u - дескриптор. Его надо удалить как я понял
-(gdb) call close(999)
-$1 = -1
-
-Далее 
-
-devops@devops-netology:~$ echo '' >/proc/35754/fd/3
+Проверяем что переменная применяется
+![image](https://user-images.githubusercontent.com/75790619/163824860-98d64285-52bc-4624-99e8-bbd21679760d.png)
 
 
-4. Нет, они только место в таблице процессов занимают))
-5. ![image](https://user-images.githubusercontent.com/75790619/161430941-330037b1-09ee-47eb-93d3-303e3dbca18b.png)
-6. uname()
-Цитата :
-     Part of the utsname information is also accessible  via  /proc/sys/ker‐
-       nel/{ostype, hostname, osrelease, version, domainname}.
-7. && - оператор условия. Команда выполнится даже если первая завершилась неуспешно
-   ; - разделитель команд, выполняющихся последовательно. Команда 2 выполнится если успешно выполнилась Команда 1
-   set -e - прерывает сессию при любом ненулевом значении исполняемых команд в конвеере кроме последней.
-   в случае &&  вместе с set -e- вероятно не имеет смысла, так как при ошибке , выполнение команд прекратиться. 
-8. 
-  -e прерывает выполнение исполнения при ошибке любой команды кроме последней в последовательности 
-  -x вывод трейса простых команд 
-  -u неустановленные/не заданные параметры и переменные считаются как ошибки, с выводом в stderr текста ошибки и выполнит завершение неинтерактивного вызова
-  -o pipefail возвращает код возврата набора/последовательности команд, ненулевой при последней команды или 0 для успешного выполнения команд.
+2. node_cpu_seconds_total
+   node_filesystem_avail_bytes
+   node_network_receive_bytes_total
+   node_memory_Active_bytes
+   
+3. Done
+     ![image](https://user-images.githubusercontent.com/75790619/163826910-8a96d2ff-59a1-46cd-95a7-24530505703a.png)
 
-9. devops@devops-netology:~$ ps -o stat
-  STAT
-  S* - interruptible sleep (waiting for an event to complete)
-  R* - running or runnable (on run queue)
+4. Да, даже понимает какая система виртуализации
+devops@devops-netology:~$ dmesg | grep virt
+[    0.016116] Booting paravirtualized kernel on VMware hypervisor
+[    4.618119] systemd[1]: Detected virtualization vmware.
+
+5. 
+devops@devops-netology:~$ /sbin/sysctl -n fs.nr_open
+1048576
+
+Это максимальное число открытых дескрипторов для системы.
+
+Я так понимаю речь о мягких и жестких лимитах
+
+devops@devops-netology:~$ ulimit -Sn
+1024
+devops@devops-netology:~$ ulimit -Hn
+1048576
+
+6.
+root@devops-netology:/# unshare -f --pid --mount-proc sleep 1h
+^Z
+[1]+  Stopped                 unshare -f --pid --mount-proc sleep 1h
+root@devops-netology:/# ps aux | grep sleep
+root        2144  0.0  0.0   5480   580 pts/0    T    15:13   0:00 unshare -f --pid --mount-proc sleep 1h
+root        2145  0.0  0.0   5476   580 pts/0    S    15:13   0:00 sleep 1h
+root        2153  0.0  0.0   6432   724 pts/0    S+   15:14   0:00 grep --color=auto sleep
+root@devops-netology:/# nsenter -t 2145 -p -m
+root@devops-netology:/# ps
+    PID TTY          TIME CMD
+      1 pts/0    00:00:00 sleep
+      2 pts/0    00:00:00 bash
+     13 pts/0    00:00:00 ps
+root@devops-netology:/#
+
+7. Это функция, которая рекурсивно вызывает сама себя, пока не забьются ресурсы системы. 
+
+Сработал механизм сgroups. Дефолтные параметры можно глянуть командой unlimit -a.
+
+Переназначение параметров происходит в этом файле -  /etc/security/limits.conf
