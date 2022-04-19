@@ -17,6 +17,32 @@ sudo systemctl enable node-exporter
 ![image](https://user-images.githubusercontent.com/75790619/163824860-98d64285-52bc-4624-99e8-bbd21679760d.png)
 
 
+Доработка к заданию 1:
+
+Дополнительные аргументы запуска будут попадать из EnviromentFile, указанного в Unit файле.
+[Unit]
+Description = UNIT for node_exporter
+
+[Service]
+RemainAfterExit=true
+EnvironmentFile=/home/devops/node_exporter-1.3.1.linux-386/node_exporter_conf
+ExecStart=/home/devops/node_exporter-1.3.1.linux-386/node_exporter $VERSION
+
+
+[Install]
+WantedBy=multi-user.target
+
+Соответственно сам файл выглядит так
+
+devops@devops-netology:~/node_exporter-1.3.1.linux-386$ cat node_exporter_conf
+VERSION=--version
+
+Рестартуем демон, рестартуем службу, проверяем
+![image](https://user-images.githubusercontent.com/75790619/164070018-ef4f8fdf-db53-4a2f-852e-4cef4de6cb97.png)
+
+
+
+
 2. node_cpu_seconds_total
    node_filesystem_avail_bytes
    node_network_receive_bytes_total
