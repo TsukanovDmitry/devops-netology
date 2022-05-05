@@ -1,92 +1,35 @@
-# Домашнее задание по лекции "Операционные системы (лекция 1)"
+Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
 
-1. Скачал tar.gz архив, распаковал. 
-Создаем юнит файл 
-![image](https://user-images.githubusercontent.com/75790619/163824230-63f247d6-fdde-42e6-8512-a8104ba66828.png)
+1. Посмотрел, понравилось)))
+2. Всего используется 14 каналов. Не пересекаются только 3 канала: 1, 6, 11
+3. Apple, Inc, 1 Infinite Loop Cupertino CA US 95014
+4. 8981
+5. Если учесть что SYN - начало соединения, а FIN - завершение, думаю что не может. 
+6. Я так понимаю что UNCONN - unable to connect. В задании -u означает UDP порт, и если учесть что данный метод не использует пакеты для синхронизации, он не будет ждать ответа. Соответственно time-wait там не будет.
+7.                     Client           Server 
+                 ESTABLESHED      ESTABLESHED
+1. >> FIN        FIN WAIT 1   >   CLOSE WAIT
+2. << FIN-ACC    FIN WAIT 2   >   CLOSE WAIT 
+3. >> ACK        TIME WAIT    <   LAST ACK
+                 CLOSED       >   CLOSED 
 
-Добавляем в автозагрузку:
-sudo systemctl enable node-exporter
+8. Максимальное число портов - 2^16 = 65536. Получается что может быть либо 65536 соединений от одного клиента, либо 65536 клиентов для сервера
+9. Наверное, в ситуации, когда происходит частое подключение отключение. И это негативно влияет, тк при каждом соединении выделяется порт и ресурсы сервера, которые могут неожиданно закончиться.
+10. В случае, если один фрагмент не будет доставлен, придется переотправить весь пакет
+11. Была история=) Строил схему на filebeat - logstash - elastic. Используемый протокол TCP, тк используется гарантированная доставка
+12. devops@devops-netology:~$ sudo ss  state listening -t -p
+Recv-Q    Send-Q       Local Address:Port            Peer Address:Port    Process
+0         4096         127.0.0.53%lo:domain               0.0.0.0:*        users:(("systemd-resolve",pid=858,fd=13))
+0         128                0.0.0.0:ssh                  0.0.0.0:*        users:(("sshd",pid=975,fd=3))
+0         4096             127.0.0.1:37463                0.0.0.0:*        users:(("containerd",pid=906,fd=12))
+0         4096             127.0.0.1:8125                 0.0.0.0:*        users:(("netdata",pid=886,fd=18))
+0         4096               0.0.0.0:19999                0.0.0.0:*        users:(("netdata",pid=886,fd=4))
+0         50                       *:http-alt                   *:*        users:(("java",pid=885,fd=117))
+0         128                   [::]:ssh                     [::]:*        users:(("sshd",pid=975,fd=4))
 
-Рестартуем, проверяем что служба запустилась
-
-![image](https://user-images.githubusercontent.com/75790619/163824412-2f1e913b-3317-4911-a2cb-4d396ec65aee.png)
-
-Создаем файл с дополнительной переменной окружения, в каталоге, который прописан в unit
-
-Проверяем что переменная применяется
-![image](https://user-images.githubusercontent.com/75790619/163824860-98d64285-52bc-4624-99e8-bbd21679760d.png)
-
-
-Доработка к заданию 1:
-
-Дополнительные аргументы запуска будут попадать из EnviromentFile, указанного в Unit файле.
-[Unit]
-Description = UNIT for node_exporter
-
-[Service]
-RemainAfterExit=true
-EnvironmentFile=/home/devops/node_exporter-1.3.1.linux-386/node_exporter_conf
-ExecStart=/home/devops/node_exporter-1.3.1.linux-386/node_exporter $VERSION
-
-
-[Install]
-WantedBy=multi-user.target
-
-Соответственно сам файл выглядит так
-
-devops@devops-netology:~/node_exporter-1.3.1.linux-386$ cat node_exporter_conf
-VERSION=--version
-
-Рестартуем демон, рестартуем службу, проверяем
-![image](https://user-images.githubusercontent.com/75790619/164070018-ef4f8fdf-db53-4a2f-852e-4cef4de6cb97.png)
-
-
-
-
-2. node_cpu_seconds_total
-   node_filesystem_avail_bytes
-   node_network_receive_bytes_total
-   node_memory_Active_bytes
-   
-3. Done
-     ![image](https://user-images.githubusercontent.com/75790619/163826910-8a96d2ff-59a1-46cd-95a7-24530505703a.png)
-
-4. Да, даже понимает какая система виртуализации
-devops@devops-netology:~$ dmesg | grep virt
-[    0.016116] Booting paravirtualized kernel on VMware hypervisor
-[    4.618119] systemd[1]: Detected virtualization vmware.
-
-5. 
-devops@devops-netology:~$ /sbin/sysctl -n fs.nr_open
-1048576
-
-Это максимальное число открытых дескрипторов для системы.
-
-Я так понимаю речь о мягких и жестких лимитах
-
-devops@devops-netology:~$ ulimit -Sn
-1024
-devops@devops-netology:~$ ulimit -Hn
-1048576
-
-6.
-root@devops-netology:/# unshare -f --pid --mount-proc sleep 1h
-^Z
-[1]+  Stopped                 unshare -f --pid --mount-proc sleep 1h
-root@devops-netology:/# ps aux | grep sleep
-root        2144  0.0  0.0   5480   580 pts/0    T    15:13   0:00 unshare -f --pid --mount-proc sleep 1h
-root        2145  0.0  0.0   5476   580 pts/0    S    15:13   0:00 sleep 1h
-root        2153  0.0  0.0   6432   724 pts/0    S+   15:14   0:00 grep --color=auto sleep
-root@devops-netology:/# nsenter -t 2145 -p -m
-root@devops-netology:/# ps
-    PID TTY          TIME CMD
-      1 pts/0    00:00:00 sleep
-      2 pts/0    00:00:00 bash
-     13 pts/0    00:00:00 ps
-root@devops-netology:/#
-
-7. Это функция, которая рекурсивно вызывает сама себя, пока не забьются ресурсы системы. 
-
-Сработал механизм сgroups. Дефолтные параметры можно глянуть командой unlimit -a.
-
-Переназначение параметров происходит в этом файле -  /etc/security/limits.conf
+13. tcpdump -A - в текстовом формате
+    tcpdump -XX - выведет соедржимое пакетов в hex
+14. Встретил флаги IP: Don't fragment(второй бит 0 1 0)
+    Ethernet называется Ethernet II
+    В дампе OUI можно увидеть в заголовке Ethernet пакета в виде короткого имени и ID (часть MACа)
+    Destination: HonHaiPr_8c:ed:c5 (c0:38:96:8c:ed:c5)    
