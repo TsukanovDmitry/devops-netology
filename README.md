@@ -1,80 +1,67 @@
-Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
+Домашнее задание к занятию "3.8. Компьютерные сети, лекция 3"
 
-1. ![image](https://user-images.githubusercontent.com/75790619/167303102-580504b3-3426-4f6d-aceb-81ddadd2a055.png)
-
-Код 301 (Moved Permanently) используется, когда ресурс был перемещен в другое место, и текущие ссылки должны быть обновлены.
-
-2. Первый статус ответа - 307 (Internal Redirect).
-![image](https://user-images.githubusercontent.com/75790619/167303254-3bd090d4-d7a9-4a27-9b61-bba4839a4c7f.png)
-![image](https://user-images.githubusercontent.com/75790619/167303298-afb8c38f-c3dc-440a-963d-466adf1d9029.png)
-Вообще самый долгий запрос был вызван каким-то js скриптом, и он выполнсялся 4.2 сек и упал по таймауту. 
-Но думаю тут речь идет про загрузку страницы stackowerflow.com - 373 ms.
-
-3. 
-devops@devops-netology:~$ wget -qO- eth0.me
-91.236.176.16
-4.
-devops@devops-netology:~$ whois 91.236.176.16 | grep org-name*
-org-name:       LLC "City-Telekom"
-
-Какой автономной системе AS? AS23242
-
-devops@devops-netology:~$ whois 91.236.176.16 | grep AS*
-% Abuse contact for '91.236.176.0 - 91.236.179.255' is 'admin@city-t.ru'
-org:            ORG-LA323-RIPE
-admin-c:        AM45345-RIPE
-status:         ASSIGNED PI
-organisation:   ORG-LA323-RIPE
-abuse-c:        AR51811-RIPE
-person:         Aleksey Markin
-nic-hdl:        AM45345-RIPE
-% Information related to '91.236.176.0/24AS23242'
-origin:         AS23242
-mnt-by:         COMSTAR-MNT
-
-5. Почему то запрос не идет дальше gateway. Не смог разобраться почему
-
-devops@devops-netology:~$ traceroute -An 8.8.8.8
-traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
- 1  192.168.106.2 [*]  6.191 ms  5.939 ms  5.846 ms
- 2  * * *
- 3  * * *
- 4  * * *
- 5  * * *
- 6  * * *
- 7  * * *
- 8  * * *
- 9  * * *
-10  * * *
-11  * * *
-12  * * *
-13  * * *
-14  * * *
-15  * * *
-16  * * *
-17  * * *
-18  * * *
-19  * * *
-20  * * *
-21  * * *
-22  * * *
-23  * * *
-24  * * *
-25  * * *
-26  * * *
-27  * * *
-28  * * *
-29  * * *
-30  * * *
-
-6. ![image](https://user-images.githubusercontent.com/75790619/167304101-1e5e1117-270c-4484-9df7-71c0b193650d.png)
-7. NS запись
-![image](https://user-images.githubusercontent.com/75790619/167304147-b28385ef-0419-42b3-8b0d-be153d6d9ad0.png)
-
-A запись
-![image](https://user-images.githubusercontent.com/75790619/167304215-92cf30da-44a5-4b88-95f2-ff337bcba617.png)
-
-8. ![image](https://user-images.githubusercontent.com/75790619/167304318-c602e497-1894-4958-a4a6-a18f71c94a7f.png)
+1. route-views>show ip route 194.186.207.140
+Routing entry for 194.186.207.0/24
+  Known via "bgp 6447", distance 20, metric 0
+  Tag 6939, type external
+  Last update from 64.71.137.241 2w5d ago
+  Routing Descriptor Blocks:
+  * 64.71.137.241, from 64.71.137.241, 2w5d ago
+      Route metric is 0, traffic share count is 1
+      AS Hops 2
+      Route tag 6939
+      MPLS label: none
 
 
+route-views>show bgp 194.186.207.140
+BGP routing table entry for 194.186.207.0/24, version 2290015143
+Paths: (23 available, best #19, table default)
+  Not advertised to any peer
+  Refresh Epoch 1
+  8283 31133 35237
+    94.142.247.3 from 94.142.247.3 (94.142.247.3)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 8283:1 8283:101 35237:600
+      unknown transitive attribute: flag 0xE0 type 0x20 length 0x18
+        value 0000 205B 0000 0000 0000 0001 0000 205B
+              0000 0005 0000 0001
+      path 7FE17E398A08 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  53767 174 31133 35237
+    162.251.163.2 from 162.251.163.2 (162.251.162.3)
+      Origin IGP, localpref 100, valid, external
+      Community: 174:21101 174:22028 53767:5000
+      path 7FE0E6419428 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3549 3356 3216 35237
+    208.51.134.254 from 208.51.134.254 (67.16.168.191)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3216:2001 3216:4477 3356:2 3356:22 3356:100 3356:123 3356:503 3356:903 3356:2067 3549:2581 3549:30840
+      path 7FE16F417B28 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+ .... More (там была очень большая "портянка")
+ 
+ 2. ![image](https://user-images.githubusercontent.com/75790619/171013619-22fff6eb-63c8-4da8-8918-c06e9d291dad.png)
+ 
+ devops@devops-netology:~$ sudo ip route add 8.16.28.0/24 via 10.1.129.1
+ devops@devops-netology:~$ sudo ip route add 8.8.28.0/24 via 10.1.129.1
+ devops@devops-netology:~$ ip route
+default via 192.168.106.2 dev ens33 proto dhcp src 192.168.106.150 metric 100
+8.8.28.0/24 via 10.1.129.1 dev dummy0
+8.16.28.0/24 via 10.1.129.1 dev dummy0
+10.1.129.0/24 dev dummy0 proto kernel scope link src 10.1.129.0
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown
+192.168.106.0/24 dev ens33 proto kernel scope link src 192.168.106.150
+192.168.106.2 dev ens33 proto dhcp scope link src 192.168.106.150 metric 100
+
+3. ![image](https://user-images.githubusercontent.com/75790619/171015216-82e2b2ba-d465-4084-974c-3acc99921c35.png)
+
+22 - (TCP,UDP) - используется под ssh соединение
+53 - (TCP,UDP) - используется для DNS
+
+4. ![image](https://user-images.githubusercontent.com/75790619/171015712-fbb808e6-83bb-4579-9d27-a51290efc94e.png)
+
+5. ![image](https://user-images.githubusercontent.com/75790619/171018204-4030bf0d-8496-4957-bf84-c3f8a742e5c8.png)
 
