@@ -55,12 +55,25 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+
+git_dir = '~/netology/sysadm-homeworks'
+bash_command = [f"cd {git_dir}", "git status"]
+result_git = os.popen(' && '.join(bash_command)).read()
+
+for string in result_git.split('\n'):
+  if string.find('modified') != -1:
+     result = git_dir + '/' + string.replace('modified:', '').strip()
+     print(result)
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+root@devops-netology:~# root@devops-netology:~# python3 python.py
+~/netology/sysadm-homeworks/foo/bar.md
+~/netology/sysadm-homeworks/readme.md
+~/netology/sysadm-homeworks/some_dir/test_file.md
 ```
 
 ## Обязательная задача 3
@@ -106,12 +119,54 @@ This is not a git repo!
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import socket
+from string import whitespace
+
+hosts = ["drive.google.com", "mail.google.com", "google.com"]
+fileList = []
+
+with open('hosts.log') as file:
+    for f in file:
+        fileList.append(f)
+
+with open('hosts.log', 'w+') as file:
+    for i in hosts:
+        result = socket.gethostbyname(i)
+        added = 0
+        for y in fileList:
+            inList = y.find(" {}".format(i))
+            if (inList != -1):
+                ipstr=y.replace('\n', '').split("  ")[1].translate({None: whitespace})
+                if (ipstr == result):
+                    print(" {}  {}\n".format(i, result))
+                    file.write(" {}  {}\n".format(i, result))
+                    added = 1
+                    break
+                else:
+                    print("[ERROR] {} IP mismatch: {}  {}\n".format(i, ipstr, result))
+                    file.write("[ERROR] {} IP mismatch: {}  {}\n".format(i, ipstr, result))
+                    added = 1
+                    break
+        if (added == 0):
+            print(" {}  {}\n".format(i, result))
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+root@devops-netology:~# python3 python.py
+ drive.google.com  64.233.164.194
+
+ mail.google.com  64.233.161.17
+
+ google.com  173.194.73.138
+
+root@devops-netology:~# python3 python.py
+ drive.google.com  64.233.164.194
+
+[ERROR] mail.google.com IP mismatch: 64.233.161.17  64.233.161.83
+
+[ERROR] google.com IP mismatch: 173.194.73.138  173.194.73.113
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
