@@ -68,12 +68,37 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+import sys
+
+
+try:
+  git_dir = sys.argv[1]
+except:
+  print("Incorrect path to repo")
+
+
+bash_command = [f"cd {git_dir}", "git status 2>1"]
+result_git = os.popen(' && '.join(bash_command)).read()
+
+if result_git == '':
+  print('This is not a git repo!')
+
+for string in result_git.split('\n'):
+  if string.find('modified') != -1:
+     result = git_dir + '/' + string.replace('modified:', '').strip()
+     print(result)
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+root@devops-netology:~# python3 python.py /root/netology/sysadm-homeworks
+/root/netology/sysadm-homeworks/foo/bar.md
+/root/netology/sysadm-homeworks/readme.md
+/root/netology/sysadm-homeworks/some_dir/test_file.md
+root@devops-netology:~# python3 python.py /root
+This is not a git repo!
 ```
 
 ## Обязательная задача 4
