@@ -35,3 +35,5 @@ Virtual box
 
 Vagrant 
 
+Tsukanovs-MacBook-Air:~ tsukanovdmitry$ vagrant --version
+Vagrant 2.2.19
