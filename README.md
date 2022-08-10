@@ -36,7 +36,7 @@ Gitlab сервер для реализации CI/CD процессов и пр
 
 Задача 3
 
----bash---
+```bash
 Tsukanovs-Air:~ tsukanovdmitry$ docker run -it --rm -d --name centos -v $(pwd)/data:/data centos:latest
 916f8257d1c1906abba4ad53b93417394198fbc23ac36317c09f670f42292218
 
@@ -60,4 +60,4 @@ drwxr-xr-x 4 root root  128 Aug 10 14:30 .
 drwxr-xr-x 1 root root 4096 Aug 10 14:26 ..
 -rw-r--r-- 1 root root   22 Aug 10 14:27 text_file_1
 -rw-r--r-- 1 root root   28 Aug 10 14:30 text_file_2
-
+```
