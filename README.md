@@ -36,20 +36,19 @@ Gitlab сервер для реализации CI/CD процессов и пр
 
 Задача 3
 
+---bash---
 Tsukanovs-Air:~ tsukanovdmitry$ docker run -it --rm -d --name centos -v $(pwd)/data:/data centos:latest
-Unable to find image 'centos:latest' locally
-latest: Pulling from library/centos
-a1d0c7532777: Already exists 
-Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
-Status: Downloaded newer image for centos:latest
 916f8257d1c1906abba4ad53b93417394198fbc23ac36317c09f670f42292218
 
 Tsukanovs-Air:~ tsukanovdmitry$ docker run -it --rm -d --name debian -v $(pwd)/data:/data centos:latest
 636f75f828e31b8618d4d2c2a8d9284802ca6cccceecc211d4759a263e642874
 
 Tsukanovs-Air:~ tsukanovdmitry$ docker exec -it centos bash
+
 [root@916f8257d1c1 /]# echo 'I am devops engineer!' > /data/text_file_1
+
 [root@916f8257d1c1 /]# exit
+
 exit
 
 Tsukanovs-Air:~ tsukanovdmitry$ echo 'This is text file from host' > ./data/text_file_2
