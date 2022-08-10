@@ -35,3 +35,30 @@ Gitlab сервер для реализации CI/CD процессов и пр
 Удобнее будет с ВМ. Не требуется много настройки, кластеризации и пр. Зато будет проше работать с файловой системой, например создавать бекапы
 
 Задача 3
+
+Tsukanovs-Air:~ tsukanovdmitry$ docker run -it --rm -d --name centos -v $(pwd)/data:/data centos:latest
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+a1d0c7532777: Already exists 
+Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
+Status: Downloaded newer image for centos:latest
+916f8257d1c1906abba4ad53b93417394198fbc23ac36317c09f670f42292218
+
+Tsukanovs-Air:~ tsukanovdmitry$ docker run -it --rm -d --name debian -v $(pwd)/data:/data centos:latest
+636f75f828e31b8618d4d2c2a8d9284802ca6cccceecc211d4759a263e642874
+
+Tsukanovs-Air:~ tsukanovdmitry$ docker exec -it centos bash
+[root@916f8257d1c1 /]# echo 'I am devops engineer!' > /data/text_file_1
+[root@916f8257d1c1 /]# exit
+exit
+
+Tsukanovs-Air:~ tsukanovdmitry$ echo 'This is text file from host' > ./data/text_file_2
+Tsukanovs-Air:~ tsukanovdmitry$ docker exec -it debian bash
+[root@636f75f828e3 /]# cd /data
+[root@636f75f828e3 data]# ls -la
+total 12
+drwxr-xr-x 4 root root  128 Aug 10 14:30 .
+drwxr-xr-x 1 root root 4096 Aug 10 14:26 ..
+-rw-r--r-- 1 root root   22 Aug 10 14:27 text_file_1
+-rw-r--r-- 1 root root   28 Aug 10 14:30 text_file_2
+
