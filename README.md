@@ -1,18 +1,28 @@
-Домашнее задание к занятию "5.5. Оркестрация кластером Docker контейнеров на примере Docker Swarm"
+Домашнее задание к занятию "6.2. SQL"
 
 Задача 1
 
-Дайте письменые ответы на следующие вопросы:
+Используя docker поднимите инстанс PostgreSQL (версию 12) c 2 volume, в который будут складываться данные БД и бэкапы.
+``yml
+version: '3.6'
 
-В чём отличие режимов работы сервисов в Docker Swarm кластере: replication и global?
-Для replication указывается количество реплик, которые хотим запустить. В режиме global запускается одна реплика на каждом узле.
+volumes:
+  data: {}
+  backup: {}
 
-Какой алгоритм выбора лидера используется в Docker Swarm кластере?
-Алгоритм поддержания распределенного консенсуса. Если фалловер не находит лидера, он инициирует себя как лидера. Лидер выбирается большинством голосов.
+services:
 
-Что такое Overlay Network?
-Это внутренняя виртуальная сеть кластера docker swarm.
-
-Задача 2
-
-Создать ваш первый Docker Swarm кластер в Яндекс.Облаке
+  postgres:
+    image: postgres:12
+    container_name: psql
+    ports:
+      - "0.0.0.0:5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+      - backup:/media/postgresql/backup
+    environment:
+      POSTGRES_USER: "test-admin-user"
+      POSTGRES_PASSWORD: "netology"
+      POSTGRES_DB: "test_db"
+    restart: always
+    ``
