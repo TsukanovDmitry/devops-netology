@@ -88,7 +88,7 @@ target | Description
  id               | integer           |           | not null | nextval('orders_id_seq'::regclass) | plain    |       
        | 
  name | character varying |           |          |                                    | extended |              | 
- цеprice        | integer           |           |          |                                    | plain    |           
+ price        | integer           |           |          |                                    | plain    |           
    | 
 Indexes:
     "orders_pkey" PRIMARY KEY, btree (id)
