@@ -18,4 +18,11 @@ services:
       MYSQL_DATABASE: "netology"
       MYSQL_ROOT_PASSWORD: "devops"
     restart: always
-```    
+``` 
+Изучите бэкап БД и восстановитесь из него.
+
+```bash
+bash-4.4# mysql -u root -p netology < /media/mysql/backup/test_dump.sql
+Enter password: 
+bash-4.4# 
+```
