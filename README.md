@@ -76,3 +76,133 @@ https://hub.docker.com/repository/docker/tsukanovda/elasticsearch
 }
 ```
 
+Задача 2
+
+В этом задании вы научитесь:
+
+создавать и удалять индексы
+изучать состояние кластера
+обосновывать причину деградации доступности данных
+Ознакомтесь с документацией и добавьте в elasticsearch 3 индекса, в соответствии со таблицей:
+
+
+Получите список индексов и их статусов, используя API и приведите в ответе на задание.
+```bash
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ curl 'localhost:9200/_cat/indices?v'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   ind-1 LMT7xSEBRjavHjVhx5cRnQ   1   0          0            0       225b           225b
+yellow open   ind-3 m1uOPkXpQ1afq2eWc5Xqyw   4   2          0            0       900b           900b
+yellow open   ind-2 swki13N7RNqzoe14QgspIw   2   1          0            0       450b           450b
+```
+Получите состояние кластера elasticsearch, используя API.
+```bash
+Tsukanovs-Air:elasticsearch tsukanovdmitry$  curl -X GET "localhost:9200/_cluster/health?pretty"
+{
+  "cluster_name" : "devops_netology",
+  "status" : "yellow",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 8,
+  "active_shards" : 8,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 10,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 44.44444444444444
+}
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ 
+```
+Как вы думаете, почему часть индексов и кластер находится в состоянии yellow?
+
+Эластик не может разместить копию шарда, поскольку праймари шарда и реплика не могут находиться на одном узле
+
+Задача 3
+
+В данном задании вы научитесь:
+
+создавать бэкапы данных
+восстанавливать индексы из бэкапов
+Создайте директорию {путь до корневой директории с elasticsearch в образе}/snapshots.
+
+Используя API зарегистрируйте данную директорию как snapshot repository c именем netology_backup.
+```bash
+curl -X PUT "localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
+{
+  "type": "fs",
+  "settings": {
+    "location": "/var/lib/elasticsearch/snapshots",
+    "compress": true
+  }
+}'
+{"acknowledged":true}
+```
+
+Создайте индекс test с 0 реплик и 1 шардом и приведите в ответе список индексов.
+
+```bash
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ curl -X PUT "localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
+> {
+>   "type": "fs",
+>   "settings": {
+>     "location": "/var/lib/elasticsearch/snapshots",
+>     "compress": true
+>   }
+> }'
+{
+  "acknowledged" : true
+}
+
+
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ curl 'localhost:9200/_cat/indices?v'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test  UejZ4q-0Tse5ZBayTdNfxQ   1   0          0            0       225b           225b
+green  open   ind-1 8XQjgUVQRE2NtzM7-kCq-g   1   0          0            0       225b           225b
+yellow open   ind-3 0r-ZNnX3QKatTJjRznt-og   4   2          0            0       900b           900b
+yellow open   ind-2 W3GuwajRRjO_cHGsofKJXA   2   1          0            0       450b           450b
+```
+
+Создайте snapshot состояния кластера elasticsearch.
+Приведите в ответе список файлов в директории со snapshotами.
+```bash
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ docker exec -it elasticsearch ls -l /var/lib/elasticsearch/snapshots/
+total 36
+-rw-r--r-- 1 elasticsearch elasticsearch  1681 Oct  1 17:34 index-0
+-rw-r--r-- 1 elasticsearch elasticsearch     8 Oct  1 17:34 index.latest
+drwxr-xr-x 7 elasticsearch elasticsearch  4096 Oct  1 17:34 indices
+-rw-r--r-- 1 elasticsearch elasticsearch 18519 Oct  1 17:34 meta-PuAssj-USRuAYGsXvS8jWQ.dat
+-rw-r--r-- 1 elasticsearch elasticsearch   392 Oct  1 17:34 snap-PuAssj-USRuAYGsXvS8jWQ.da
+```
+Удалите индекс test и создайте индекс test-2. Приведите в ответе список индексов.
+
+```bash
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ curl 'localhost:9200/_cat/indices?pretty'
+green  open test-2 AeBFbelwSXmdFN4FCDfYXA 1 0 0 0 225b 225b
+green  open ind-1  8XQjgUVQRE2NtzM7-kCq-g 1 0 0 0 225b 225b
+yellow open ind-3  0r-ZNnX3QKatTJjRznt-og 4 2 0 0 900b 900b
+yellow open ind-2  W3GuwajRRjO_cHGsofKJXA 2 1 0 0 450b 450b
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ 
+```
+Приведите в ответе запрос к API восстановления и итоговый список индексов.
+
+```bash
+curl -X POST "localhost:9200/_snapshot/netology_backup/snapshot_1/_restore?pretty" -H 'Content-Type: application/json' -d'
+{
+  "indices": "*",
+  "include_global_state": true
+}
+'
+
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ curl 'localhost:9200/_cat/indices?pretty'
+green  open test-2 AeBFbelwSXmdFN4FCDfYXA 1 0 0 0 225b 225b
+green  open test   YKIZNsHAQ7eplcXWNUjJgw 1 0 0 0 225b 225b
+green  open ind-1  fMw-K5-YR3iwByWR6QaSSA 1 0 0 0 225b 225b
+yellow open ind-3  wmSkYdjyTUiHoUrYvNx4mA 4 2 0 0 900b 900b
+yellow open ind-2  lM6A5iw8QdqfBnwjR_Cb3g 2 1 0 0 450b 450b
+Tsukanovs-Air:elasticsearch tsukanovdmitry$ 
+```
+
+
