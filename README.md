@@ -54,3 +54,25 @@ CMD ["sh", "-c", "${ES_HOME}/bin/elasticsearch"]
 
 https://hub.docker.com/repository/docker/tsukanovda/elasticsearch
 
+ответ elasticsearch на запрос пути / в json виде
+
+```json
+{
+  "name" : "netology_test",
+  "cluster_name" : "devops_netology",
+  "cluster_uuid" : "kpSjjkMmRb6oYdsASrIeNQ",
+  "version" : {
+    "number" : "8.4.2",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "89f8c6d8429db93b816403ee75e5c270b43a940a",
+    "build_date" : "2022-09-14T16:26:04.382547801Z",
+    "build_snapshot" : false,
+    "lucene_version" : "9.3.0",
+    "minimum_wire_compatibility_version" : "7.17.0",
+    "minimum_index_compatibility_version" : "7.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
