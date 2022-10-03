@@ -35,6 +35,25 @@ Redis блокирует операции записи
 
 При добавлении очередной реплики на Redis, был превышен лимит по памяти (maxmemory) и Redis начал блокировать записи.
 
+Правки
+```
+Возможно дело в том, что в Redis забилась память истекшими ключами, которые еще не были удалены. И Редис стал блокировать запись чтобы произвести чистку, поскольку Редис однопоточное приложение.
+Возможно есть смысл скорректировать параметр hz в redis.conf
+
+ Not all tasks are performed with the same frequency, but Redis checks for
+# tasks to perform according to the specified "hz" value.
+#
+# By default "hz" is set to 10. Raising the value will use more CPU when
+# Redis is idle, but at the same time will make Redis more responsive when
+# there are many keys expiring at the same time, and timeouts may be
+# handled with more precision.
+#
+# The range is between 1 and 500, however a value over 100 is usually not
+# a good idea. Most users should use the default of 10 and raise this up to
+# 100 only in environments where very low latency is required.
+```
+
+
 Задача 3
 
 Вы подняли базу данных MySQL для использования в гис-системе. При росте количества записей, в таблицах базы, пользователи начали жаловаться на ошибки вида:
@@ -66,4 +85,14 @@ postmaster invoked oom-killer
 Вероятно, что серверу PostgreSQL выделено мало памяти, и ее попросту не хватает.
 
 Необходимо увеличить параметр vm.overcommit_ratio. 
+```
+Ну если смысла шатать ядро PostgreSQL нету, тогда есть смысл пошатать хост PostgreSQL (добавить ОЗУ, процессор, настроить swap)
+Либо снизить нагрузку на БД, скорректировав параметры
+max_connections
+shared_buffer
+work_mem
+effective_cache_size
+maintenance_work_mem
 
+PS Но вообще, в продакшнене, я ни разу не встречал ситуации чтобы PostgreSQL падал по OOM. Вероятно изначально был просчет нагрузки на БД, либо в БД происходит что-то, что очень сильно забивает память, а OOM не успевает ее чистить. Я думаю что прежде всего нужно понять причину такого сообщения
+```
