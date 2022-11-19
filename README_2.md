@@ -52,7 +52,16 @@ Redis блокирует операции записи
 # a good idea. Most users should use the default of 10 and raise this up to
 # 100 only in environments where very low latency is required.
 ```
+Правки[2]
+```
+Возможно дело в том, что в Redis находится много ключей, которые истекают в одну и ту же секунду
+From troubleshooting:
 
+However the algorithm is adaptive and will loop if it finds more than 25% of keys already expired in the set of sampled keys. But given that we run the algorithm ten times per second, this means that the unlucky event of more than 25% of the keys in our random sample are expiring at least in the same second.
+
+Basically this means that if the database has many, many keys expiring in the same second, and these make up at least 25% of the current population of keys with an expire set, Redis can block in order to get the percentage of keys already expired below 25%.
+
+```
 
 Задача 3
 
