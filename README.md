@@ -1,237 +1,31 @@
-Домашнее задание к занятию "08.01 Введение в Ansible"
+Домашнее задание к занятию "09.01 Жизненный цикл ПО"
 
-Подготовка к выполнению
 
-Установите ansible версии 2.10 или выше.
-```
-Tsukanovs-MacBook-Air:~ tsukanovdmitry$ ansible --version
-ansible [core 2.13.3]
-```
-Создайте свой собственный публичный репозиторий на github с произвольным именем.
-```
-https://github.com/TsukanovDmitry/devops-ansible
-```
-Скачайте playbook из репозитория с домашним заданием и перенесите его в свой репозиторий.
-```
-done
-```
-Попробуйте запустить playbook на окружении из test.yml, зафиксируйте какое значение имеет факт some_fact для указанного хоста при выполнении playbook'a.
-```
-ASK [Gathering Facts] *********************************************************
-[WARNING]: Platform darwin on host localhost is using the discovered Python
-interpreter at /usr/local/bin/python3.10, but future installation of another
-Python interpreter could change the meaning of that path. See
-https://docs.ansible.com/ansible-
-core/2.13/reference_appendices/interpreter_discovery.html for more information.
-ok: [localhost]
+Open -> On reproduce
+On reproduce -> Open, Done reproduce
+Done reproduce -> On fix
+On fix -> On reproduce, Done fix
+Done fix -> On test
+On test -> On fix, Done
+Done -> Closed, Open
 
-TASK [Print OS] ****************************************************************
-ok: [localhost] => {
-    "msg": "MacOSX"
-}
+![image](https://user-images.githubusercontent.com/75790619/213777392-18ce571a-332b-445c-93cc-b316ae0e7d62.png)
 
-TASK [Print fact] **************************************************************
-ok: [localhost] => {
-    "msg": 12
-}
 
-PLAY RECAP *********************************************************************
-localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+Остальные задачи должны проходить по упрощённому workflow:
 
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-Найдите файл с переменными (group_vars) в котором задаётся найденное в первом пункте значение и поменяйте его на 'all default fact'.
-```
-Tsukanovs-MacBook-Air:all tsukanovdmitry$ cat examp.yml
----
-  some_fact: all default fact
-Tsukanovs-MacBook-Air:all tsukanovdmitry
-```
-Воспользуйтесь подготовленным (используется docker) или создайте собственное окружение для проведения дальнейших испытаний.
-Проведите запуск playbook на окружении из prod.yml. Зафиксируйте полученные значения some_fact для каждого из managed host.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-playbook -i inventory/prod.yml -v site.yml
-No config file found; using defaults
+Open -> On develop
+On develop -> Open, Done develop
+Done develop -> On test
+On test -> On develop, Done
+Done -> Closed, Open
 
-PLAY [Print os facts] **********************************************************
+![image](https://user-images.githubusercontent.com/75790619/213777548-a7465d15-5789-4b49-a111-f81bed569835.png)
 
-TASK [Gathering Facts] *********************************************************
-ok: [ubuntu]
-ok: [centos7]
 
-TASK [Print OS] ****************************************************************
-ok: [centos7] => {
-    "msg": "CentOS"
-}
-ok: [ubuntu] => {
-    "msg": "Ubuntu"
-}
+Создать задачу с типом bug, попытаться провести его по всему workflow до Done. Создать задачу с типом epic, к ней привязать несколько задач с типом task, провести их по всему workflow до Done. При проведении обеих задач по статусам использовать kanban. Вернуть задачи в статус Open. Перейти в scrum, запланировать новый спринт, состоящий из задач эпика и одного бага, стартовать спринт, провести задачи до состояния Closed. Закрыть спринт.
 
-TASK [Print fact] **************************************************************
-ok: [centos7] => {
-    "msg": "el"
-}
-ok: [ubuntu] => {
-    "msg": "deb"
-}
+Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
 
-PLAY RECAP *********************************************************************
-centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-Добавьте факты в group_vars каждой из групп хостов так, чтобы для some_fact получились следующие значения: для deb - 'deb default fact', для el - 'el default fact'.
-```
-done
-```
-Повторите запуск playbook на окружении prod.yml. Убедитесь, что выдаются корректные значения для всех хостов.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-playbook -i inventory/prod.yml -v site.yml
-No config file found; using defaults
-
-PLAY [Print os facts] **********************************************************
-
-TASK [Gathering Facts] *********************************************************
-ok: [ubuntu]
-ok: [centos7]
-
-TASK [Print OS] ****************************************************************
-ok: [centos7] => {
-    "msg": "CentOS"
-}
-ok: [ubuntu] => {
-    "msg": "Ubuntu"
-}
-
-TASK [Print fact] **************************************************************
-ok: [centos7] => {
-    "msg": "el default fact"
-}
-ok: [ubuntu] => {
-    "msg": "deb default fact"
-}
-
-PLAY RECAP *********************************************************************
-centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-
-При помощи ansible-vault зашифруйте факты в group_vars/deb и group_vars/el с паролем netology.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-vault encrypt group_vars/deb/examp.yml
-New Vault password: 
-Confirm New Vault password: 
-Encryption successful
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-vault encrypt group_vars/el/examp.yml
-New Vault password: 
-Confirm New Vault password: 
-Encryption successful
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-Запустите playbook на окружении prod.yml. При запуске ansible должен запросить у вас пароль. Убедитесь в работоспособности.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass
-Vault password: 
-
-PLAY [Print os facts] **********************************************************
-
-TASK [Gathering Facts] *********************************************************
-ok: [ubuntu]
-ok: [centos7]
-
-TASK [Print OS] ****************************************************************
-ok: [centos7] => {
-    "msg": "CentOS"
-}
-ok: [ubuntu] => {
-    "msg": "Ubuntu"
-}
-
-TASK [Print fact] **************************************************************
-ok: [centos7] => {
-    "msg": "el default fact"
-}
-ok: [ubuntu] => {
-    "msg": "deb default fact"
-}
-
-PLAY RECAP *********************************************************************
-centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-Посмотрите при помощи ansible-doc список плагинов для подключения. Выберите подходящий для работы на control node.
-```
-local
-```
-В prod.yml добавьте новую группу хостов с именем local, в ней разместите localhost с необходимым типом подключения.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ cat inventory/prod.yml
----
-  el:
-    hosts:
-      centos7:
-        ansible_connection: docker
-  deb:
-    hosts:
-      ubuntu:
-        ansible_connection: docker
-  local:
-    hosts:
-      localhost:
-        ansible_connection: local
-
-```
-
-Запустите playbook на окружении prod.yml. При запуске ansible должен запросить у вас пароль. Убедитесь что факты some_fact для каждого из хостов определены из верных group_vars.
-```
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass
-Vault password: 
-
-PLAY [Print os facts] **********************************************************
-
-TASK [Gathering Facts] *********************************************************
-[WARNING]: Platform darwin on host localhost is using the discovered Python
-interpreter at /usr/local/bin/python3.10, but future installation of another
-Python interpreter could change the meaning of that path. See
-https://docs.ansible.com/ansible-
-core/2.13/reference_appendices/interpreter_discovery.html for more information.
-ok: [localhost]
-ok: [ubuntu]
-ok: [centos7]
-
-TASK [Print OS] ****************************************************************
-ok: [centos7] => {
-    "msg": "CentOS"
-}
-ok: [ubuntu] => {
-    "msg": "Ubuntu"
-}
-ok: [localhost] => {
-    "msg": "MacOSX"
-}
-
-TASK [Print fact] **************************************************************
-ok: [centos7] => {
-    "msg": "el default fact"
-}
-ok: [ubuntu] => {
-    "msg": "deb default fact"
-}
-ok: [localhost] => {
-    "msg": "all default fact"
-}
-
-PLAY RECAP *********************************************************************
-centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
-Tsukanovs-MacBook-Air:playbook tsukanovdmitry$ 
-```
-
-Заполните README.md ответами на вопросы. Сделайте git push в ветку master. В ответе отправьте ссылку на ваш открытый репозиторий с изменённым playbook и заполненным README.md.
+https://drive.google.com/file/d/1p1n9zChw1lF6ZrMo2QF2eoQ061DMAk9D/view?usp=sharing
+https://drive.google.com/file/d/1IQERCd9kzpgNJZgUD-odp_lQg9fsHtJn/view?usp=sharing
